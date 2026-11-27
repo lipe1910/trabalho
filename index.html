@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Esparta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Cinzel:wght@700;800;900&display=swap">
+<style>
+/* Layout: uma página longa como um vaso grego desenrolado. Faixas de meandro abrem e fecham;
+   seções alternam texto e figura. Claro = vaso de figuras negras; escuro = vaso de figuras vermelhas. */
+:root {
+  --ground: #DA8A57;      /* argila do vaso */
+  --ground-glow: #E79D6A;
+  --ground-deep: #B9643A; /* montanhas, sombras */
+  --ink: #1B130E;         /* verniz preto das figuras */
+  --on-ink: #F2E2C4;
+  --text: #1B130E;
+  --text-soft: #3A2014;
+  --rule: #B66A3D;
+  --persian: #5E1B10;
+  --persian-deep: #3E120A;
+  --figure: var(--ink);
+  --incise: var(--ground);
+  --font-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --font-body: 'Alegreya', Georgia, 'Times New Roman', serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #15100D; --ground-glow: #2A1B13; --ground-deep: #3A2519;
+    --ink: #D9824F; --on-ink: #15100D; --text: #EED5BA; --text-soft: #C9A98C;
+    --rule: #4A3326; --persian: #A0482A; --persian-deep: #6E2A15;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #15100D; --ground-glow: #2A1B13; --ground-deep: #3A2519;
+  --ink: #D9824F; --on-ink: #15100D; --text: #EED5BA; --text-soft: #C9A98C;
+  --rule: #4A3326; --persian: #A0482A; --persian-deep: #6E2A15;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  line-height: 1.55;
+}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Figuras desenhadas (símbolos SVG reaproveitados) */
+.f { fill: var(--figure); }
+.i { fill: var(--incise); }
+.is { fill: none; stroke: var(--incise); }
+.fs { fill: none; stroke: var(--figure); stroke-linecap: round; stroke-linejoin: round; }
+.p { fill: var(--persian); }
+.pd { fill: var(--persian-deep); }
+
+/* Faixa de meandro (padrão grego) */
+.band { border-block: 3px solid var(--ink); padding-block: 5px; }
+.meander {
+  height: 30px;
+  background: var(--ink);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M0 26H30M25 26V4H5V20H19V10H11V15' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x left center / 30px 30px;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M0 26H30M25 26V4H5V20H19V10H11V15' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x left center / 30px 30px;
+}
+
+/* Abertura */
+.hero { background: radial-gradient(ellipse at 50% 0%, var(--ground-glow), var(--ground) 70%); }
+.hero-in {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 24px;
+  padding-block: 56px 32px;
+}
+.hero-fig { width: 100%; max-width: 170px; height: auto; aspect-ratio: 2 / 3; justify-self: center; }
+.hero-fig.l { animation: marchaL .9s cubic-bezier(.16, 1, .3, 1); }
+.hero-fig.r { scale: -1 1; animation: marchaR .9s cubic-bezier(.16, 1, .3, 1); }
+@keyframes marchaL { from { translate: -60px 0; } to { translate: 0 0; } }
+@keyframes marchaR { from { translate: 60px 0; } to { translate: 0 0; } }
+.hero-text { text-align: center; display: grid; gap: 14px; }
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .9rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+.hero h1 { font-weight: 900; font-size: clamp(3.6rem, 13vw, 10.5rem); letter-spacing: .04em; line-height: .95; }
+.lede { font-size: clamp(1.25rem, 2.6vw, 1.7rem); font-weight: 500; }
+
+.facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  border-block: 2px solid var(--ink);
+}
+.facts > div { padding: 16px 18px; display: grid; gap: 4px; }
+.facts > div + div { border-left: 2px solid var(--ink); }
+.facts dt { font-family: var(--font-display); font-weight: 700; font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; color: var(--text-soft); }
+.facts dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.toc { display: flex; flex-wrap: wrap; gap: 10px; padding-block: 28px 40px; justify-content: center; }
+.toc a {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .82rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 8px 14px;
+  border: 2px solid var(--ink);
+}
+.toc a:hover { background: var(--ink); color: var(--on-ink); }
+
+/* Seções */
+section { padding-block: 64px; }
+.sec-head { display: grid; gap: 10px; margin-bottom: 32px; max-width: 46rem; }
+.sec-head h2 { font-weight: 900; font-size: clamp(2.1rem, 5vw, 3.5rem); }
+.sec-head .eyebrow { color: var(--text-soft); }
+.prose { display: grid; gap: 16px; max-width: 65ch; min-width: 0; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.divider { height: 22px; max-width: 220px; margin: 0 auto; }
+.divider .meander { height: 22px; -webkit-mask-size: 22px 22px; mask-size: 22px 22px; }
+
+/* Mapa */
+.map { width: 100%; max-width: 560px; height: auto; justify-self: center; }
+.map .land { fill: var(--figure); }
+.map .region { fill: var(--incise); font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: 3px; }
+.map .sea { fill: var(--text); font-family: var(--font-body); font-style: italic; font-weight: 500; font-size: 24px; }
+.map .dot { fill: var(--on-ink); stroke: var(--ink); stroke-width: 3; }
+.map .ring { fill: none; stroke: var(--on-ink); stroke-width: 3; }
+.map .pill { fill: var(--on-ink); }
+.map .pill-t { fill: var(--figure); font-family: var(--font-display); font-weight: 800; font-size: 21px; letter-spacing: 2px; }
+
+/* Sociedade */
+.tiers { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.tier { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 28px; align-items: center; }
+.tier .bar {
+  justify-self: center;
+  width: var(--w);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: .12em;
+  text-align: center;
+  padding-block: 22px;
+}
+.tier p { min-width: 0; }
+.tier b { font-weight: 700; }
+.society-note { margin-top: 28px; max-width: 65ch; }
+
+/* Agogê */
+.ages { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 40px; }
+.ages li { display: grid; grid-template-rows: 190px auto; }
+.ages svg { align-self: end; justify-self: center; height: auto; }
+.age { border-top: 6px solid var(--ink); padding: 14px 12px 0; text-align: center; display: grid; gap: 4px; }
+.age strong { font-family: var(--font-display); font-weight: 900; font-size: 1.7rem; font-variant-numeric: tabular-nums; }
+.age span { font-size: 1.05rem; }
+
+/* Mulheres */
+.runner { width: 100%; max-width: 380px; height: auto; justify-self: center; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.list li { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 16px; }
+.list li::before { content: ""; width: 12px; height: 12px; margin-top: .55em; background: var(--ink); rotate: 45deg; }
+
+blockquote { margin: 0; display: grid; gap: 8px; }
+blockquote p { font-style: italic; font-size: clamp(1.35rem, 2.6vw, 1.7rem); line-height: 1.3; }
+blockquote cite { font-style: normal; font-family: var(--font-display); font-weight: 700; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-soft); }
+.quote-solo { margin-top: 36px; max-width: 42rem; }
+
+/* Governo */
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.card { background: var(--ink); color: var(--on-ink); padding: 26px; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 22px; align-items: center; }
+.card .ico { --figure: var(--ground); --incise: var(--ink); width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; gap: 2px; }
+.card h3 { font-weight: 900; font-size: 1.6rem; margin-bottom: 6px; }
+.card p { font-size: 1.08rem; line-height: 1.45; }
+
+/* Termópilas */
+.battle { width: 100%; height: auto; display: block; border-block: 3px solid var(--ink); background: var(--ground); }
+.battle .mount { fill: var(--ground-deep); }
+.battle .lbl { fill: var(--text); font-family: var(--font-body); font-style: italic; font-weight: 700; font-size: 24px; paint-order: stroke; stroke: var(--ground); stroke-width: 6px; stroke-linejoin: round; }
+.battle-text { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 48px; margin-top: 36px; }
+.quotes { display: grid; gap: 28px; align-content: start; }
+
+/* Linha do tempo */
+.tl { list-style: none; margin: 0; padding: 0; max-width: 54rem; }
+.tl li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 24px; padding-block: 16px; border-top: 2px solid var(--rule); }
+.tl li:last-child { border-bottom: 2px solid var(--rule); }
+.tl time, .tl .when { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; letter-spacing: .04em; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.tl b { font-weight: 700; }
+
+/* Curiosidades */
+.facts3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px; }
+.facts3 article { display: grid; gap: 10px; align-content: start; border-top: 6px solid var(--ink); padding-top: 18px; }
+.facts3 h3 { font-weight: 900; font-size: 1.45rem; }
+.facts3 p { font-size: 1.08rem; }
+
+footer { padding-block: 48px 0; }
+.sources { display: grid; gap: 10px; max-width: 54rem; padding-bottom: 40px; }
+.sources h2 { font-weight: 800; font-size: 1.2rem; letter-spacing: .1em; }
+.sources ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 1.05rem; }
+
+@media (max-width: 860px) {
+  .split, .battle-text { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .facts3 { grid-template-columns: minmax(0, 1fr); }
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .ages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .hero-in { grid-template-columns: minmax(0, 1fr); padding-block: 40px 24px; }
+  .hero-fig { display: none; }
+  .facts > div + div { border-left: 0; border-top: 2px solid var(--ink); }
+  .tier { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .tier .bar { justify-self: start; }
+  .tl li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .card { grid-template-columns: minmax(0, 1fr); }
+  section { padding-block: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-fig.l, .hero-fig.r { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Figuras reaproveitadas em toda a página -->
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <defs>
+    <symbol id="hoplita" viewBox="0 0 200 300">
+      <path class="f" d="M150 4 L158 30 L150 44 L142 30 Z"/>
+      <rect class="f" x="147" y="40" width="6" height="252"/>
+      <path class="f" d="M70 46 Q40 54 44 104 Q52 72 80 58 Z"/>
+      <path class="f" d="M66 52 Q100 -6 138 46 Q100 22 66 52 Z"/>
+      <path class="f" d="M72 64 Q72 32 102 32 Q132 32 132 64 L132 98 L118 102 L116 80 L106 80 L106 106 L86 102 Q74 90 72 64 Z"/>
+      <path class="i" d="M110 58 H133 V66 H125 V98 H119 V66 H110 Z"/>
+      <circle class="f" cx="96" cy="174" r="74"/>
+      <circle class="is" cx="96" cy="174" r="63" stroke-width="4"/>
+      <path class="is" d="M70 210 L96 134 L122 210" stroke-width="12"/>
+      <path class="f" d="M80 238 L70 292 L90 294 L96 240 Z"/>
+      <path class="f" d="M104 240 L118 290 L140 292 L120 236 Z"/>
+      <path class="f" d="M60 292 L92 292 L92 298 L58 298 Z"/>
+      <path class="f" d="M116 290 L148 290 L150 298 L116 298 Z"/>
+    </symbol>
+    <symbol id="capacete" viewBox="38 0 100 110">
+      <path class="f" d="M70 46 Q40 54 44 104 Q52 72 80 58 Z"/>
+      <path class="f" d="M66 52 Q100 -6 138 46 Q100 22 66 52 Z"/>
+      <path class="f" d="M72 64 Q72 32 102 32 Q132 32 132 64 L132 98 L118 102 L116 80 L106 80 L106 106 L86 102 Q74 90 72 64 Z"/>
+      <path class="i" d="M110 58 H133 V66 H125 V98 H119 V66 H110 Z"/>
+    </symbol>
+    <symbol id="menino" viewBox="0 0 120 220">
+      <path class="fs" d="M50 66 L34 110" stroke-width="11"/>
+      <path class="fs" d="M52 130 L42 172 L36 212" stroke-width="13"/>
+      <circle class="f" cx="64" cy="30" r="20"/>
+      <rect class="f" x="58" y="46" width="12" height="14"/>
+      <path class="f" d="M44 58 L82 58 L92 134 L36 134 Z"/>
+      <path class="is" d="M40 124 L88 124" stroke-width="3"/>
+      <path class="fs" d="M78 66 L96 106" stroke-width="11"/>
+      <path class="fs" d="M74 130 L84 172 L94 210" stroke-width="13"/>
+    </symbol>
+    <symbol id="anciao" viewBox="0 0 150 230">
+      <path class="fs" d="M115 60 L121 222" stroke-width="7"/>
+      <circle class="f" cx="66" cy="36" r="19"/>
+      <path class="f" d="M68 46 Q76 82 90 42 Z"/>
+      <path class="f" d="M44 62 Q66 50 88 62 L98 214 L36 214 Z"/>
+      <path class="is" d="M58 92 L52 204 M74 92 L78 204" stroke-width="3"/>
+      <path class="fs" d="M84 72 L113 98" stroke-width="11"/>
+      <path class="f" d="M38 212 L34 222 L66 222 L64 212 Z"/>
+    </symbol>
+    <symbol id="casa" viewBox="0 0 120 110">
+      <path class="f" d="M8 46 L60 10 L112 46 Z"/>
+      <rect class="f" x="20" y="44" width="80" height="62"/>
+      <rect class="i" x="50" y="68" width="20" height="38"/>
+      <rect class="i" x="30" y="58" width="12" height="12"/>
+      <rect class="i" x="78" y="58" width="12" height="12"/>
+    </symbol>
+    <symbol id="corredora" viewBox="0 0 200 240">
+      <path class="fs" d="M108 64 L84 88 L64 78" stroke-width="11"/>
+      <path class="fs" d="M108 124 L82 168 L42 184 L34 198" stroke-width="14"/>
+      <circle class="f" cx="107" cy="27" r="9"/>
+      <circle class="f" cx="124" cy="34" r="17"/>
+      <path class="f" d="M104 52 L134 54 L148 128 L92 130 Z"/>
+      <path class="is" d="M100 84 L138 84 M96 120 L146 118" stroke-width="3"/>
+      <path class="fs" d="M128 64 L158 84 L178 66" stroke-width="11"/>
+      <path class="fs" d="M130 124 L160 160 L164 214 L180 216" stroke-width="14"/>
+    </symbol>
+    <symbol id="persa" viewBox="0 0 60 130">
+      <rect class="p" x="48" y="8" width="4" height="116"/>
+      <path class="p" d="M19 14 Q30 2 41 14 L41 24 L19 24 Z"/>
+      <circle class="p" cx="30" cy="31" r="10"/>
+      <path class="p" d="M17 42 L43 42 L49 112 L11 112 Z"/>
+      <rect class="pd" x="2" y="48" width="20" height="58"/>
+      <path class="p" d="M20 112 L24 128 L30 128 L28 112 Z"/>
+      <path class="p" d="M34 112 L38 128 L44 128 L42 112 Z"/>
+    </symbol>
+    <symbol id="coluna" viewBox="0 0 100 100">
+      <rect class="f" x="18" y="8" width="64" height="8"/>
+      <path class="f" d="M24 16 H76 L70 24 H30 Z"/>
+      <rect class="f" x="30" y="24" width="40" height="60"/>
+      <path class="is" d="M40 26 V82 M50 26 V82 M60 26 V82" stroke-width="3"/>
+      <rect class="f" x="22" y="84" width="56" height="8"/>
+    </symbol>
+    <symbol id="multidao" viewBox="0 0 100 100">
+      <circle class="f" cx="22" cy="44" r="11"/>
+      <path class="f" d="M6 88 Q6 60 22 60 Q38 60 38 88 Z"/>
+      <circle class="f" cx="50" cy="40" r="11"/>
+      <path class="f" d="M34 88 Q34 56 50 56 Q66 56 66 88 Z"/>
+      <circle class="f" cx="78" cy="44" r="11"/>
+      <path class="f" d="M62 88 Q62 60 78 60 Q94 60 94 88 Z"/>
+    </symbol>
+    <symbol id="olho" viewBox="0 0 100 100">
+      <path class="f" d="M6 50 Q50 12 94 50 Q50 88 6 50 Z"/>
+      <circle class="i" cx="50" cy="50" r="16"/>
+      <circle class="f" cx="50" cy="50" r="6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="band"><div class="meander"></div></div>
+  <div class="wrap hero-in">
+    <svg class="hero-fig l" viewBox="0 0 200 300" aria-hidden="true"><use href="#hoplita"/></svg>
+    <div class="hero-text">
+      <p class="eyebrow">Trabalho de História · Grécia Antiga</p>
+      <h1>ESPARTA</h1>
+      <p class="lede">A cidade-estado que transformou cada cidadão em soldado.</p>
+    </div>
+    <svg class="hero-fig r" viewBox="0 0 200 300" aria-hidden="true"><use href="#hoplita"/></svg>
+  </div>
+  <div class="wrap">
+    <dl class="facts">
+      <div><dt>Região</dt><dd>Lacônia, no Peloponeso</dd></div>
+      <div><dt>Fundação</dt><dd>séculos X–IX a.C.</dd></div>
+      <div><dt>Auge</dt><dd>séculos VI–V a.C.</dd></div>
+      <div><dt>Declínio</dt><dd>371 a.C., em Leuctra</dd></div>
+    </dl>
+  </div>
+  <nav class="wrap toc" aria-label="Seções">
+    <a href="#mapa">Mapa</a>
+    <a href="#sociedade">Sociedade</a>
+    <a href="#agoge">Agogê</a>
+    <a href="#mulheres">Mulheres</a>
+    <a href="#governo">Governo</a>
+    <a href="#termopilas">Termópilas</a>
+    <a href="#curiosidades">Curiosidades</a>
+  </nav>
+  <div class="band"><div class="meander"></div></div>
+</header>
+
+<main>
+  <section id="mapa">
+    <div class="wrap split">
+      <div class="prose">
+        <div class="sec-head" style="margin-bottom: 8px">
+          <p class="eyebrow">Lacônia · Peloponeso</p>
+          <h2>Onde ficava Esparta</h2>
+        </div>
+        <p>Esparta ficava na <b>Lacônia</b>, no sul do <b>Peloponeso</b>, a grande península do sul da Grécia. A cidade nasceu no vale do rio Eurotas, protegida por montanhas dos dois lados.</p>
+        <p>Como toda <i>pólis</i> grega, era uma <b>cidade-estado</b>: tinha governo, leis e exército próprios. Sua grande rival era Atenas.</p>
+        <p>Entre os séculos VIII e VII a.C., os espartanos conquistaram a <b>Messênia</b>, a região vizinha a oeste, e transformaram seus moradores em hilotas, os servos que trabalhavam a terra.</p>
+      </div>
+      <svg class="map" viewBox="0 0 860 870" role="img" aria-label="Mapa estilizado do sul da Grécia com Esparta, Atenas e as Termópilas marcadas">
+        <path class="land" d="M534 426 L519 421 L492 405 L455 381 L418 370 L372 351 L325 334 L303 348 L275 370 L238 363 L224 398 L190 428 L224 468 L251 499 L279 551 L294 598 L283 645 L288 680 L301 696 L334 708 L347 687 L362 656 L375 640 L394 668 L409 710 L427 762 L442 786 L455 750 L458 703 L483 692 L501 720 L529 757 L553 774 L575 774 L566 739 L547 710 L534 668 L519 621 L501 574 L492 522 L510 515 L538 534 L566 562 L594 562 L631 539 L612 515 L594 499 L566 492 L547 461 Z"/>
+        <path class="land" d="M534 426 L594 412 L621 405 L649 421 L658 428 L677 445 L704 468 L729 492 L732 457 L723 414 L727 381 L695 351 L668 327 L645 304 L612 280 L575 257 L547 240 L510 226 L455 222 L464 193 L510 186 L538 163 L529 116 L547 85 L575 57 L594 10 L29 10 L33 57 L57 109 L122 186 L140 210 L183 285 L196 316 L248 327 L288 325 L310 332 L322 318 L362 320 L423 323 L431 308 L446 327 L483 351 L510 386 L529 410 Z"/>
+        <path class="land" d="M510 203 L557 170 L594 175 L631 222 L677 245 L742 292 L779 339 L825 374 L830 414 L797 398 L760 363 L714 339 L668 311 L649 297 L612 264 L566 233 L519 217 Z"/>
+        <path class="land" d="M523 797 L547 809 L551 837 L532 847 L519 823 Z"/>
+        <text class="region" x="395" y="478" text-anchor="middle">PELOPONESO</text>
+        <text class="region" x="342" y="612" text-anchor="middle" style="font-size: 13px; letter-spacing: 1px">MESSÊNIA</text>
+        <text class="sea" x="70" y="650">Mar Jônico</text>
+        <text class="sea" x="660" y="660">Mar Egeu</text>
+        <circle class="ring" cx="433" cy="628" r="20"/>
+        <circle class="dot" cx="433" cy="628" r="10"/>
+        <rect class="pill" x="460" y="609" width="146" height="38"/>
+        <text class="pill-t" x="472" y="636">ESPARTA</text>
+        <circle class="dot" cx="673" cy="414" r="10"/>
+        <rect class="pill" x="694" y="395" width="128" height="38"/>
+        <text class="pill-t" x="706" y="422">ATENAS</text>
+        <circle class="dot" cx="453" cy="222" r="10"/>
+        <rect class="pill" x="474" y="203" width="196" height="38"/>
+        <text class="pill-t" x="486" y="230">TERMÓPILAS</text>
+      </svg>
+    </div>
+  </section>
+
+  <div class="divider"><div class="meander"></div></div>
+
+  <section id="sociedade">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Quem era quem</p>
+        <h2>Uma sociedade em três camadas</h2>
+      </div>
+      <ol class="tiers">
+        <li class="tier">
+          <div class="bar" style="--w: 52%">ESPARTANOS</div>
+          <p><b>Os cidadãos.</b> Só eles votavam e faziam parte do exército. Não trabalhavam na terra nem no comércio: viviam para treinar e lutar.</p>
+        </li>
+        <li class="tier">
+          <div class="bar" style="--w: 74%">PERIECOS</div>
+          <p><b>Livres, mas sem direitos políticos.</b> Moravam em vilas ao redor e eram comerciantes e artesãos. Também lutavam na guerra quando chamados.</p>
+        </li>
+        <li class="tier">
+          <div class="bar" style="--w: 96%">HILOTAS</div>
+          <p><b>Servos do Estado.</b> Trabalhavam a terra e entregavam parte da colheita aos espartanos. Eram a maioria da população.</p>
+        </li>
+      </ol>
+      <p class="society-note">Quanto mais alto na pirâmide, mais direitos e menos gente. Como os hilotas eram muito mais numerosos, os espartanos tinham medo de revoltas e viviam sempre armados e vigilantes.</p>
+    </div>
+  </section>
+
+  <div class="divider"><div class="meander"></div></div>
+
+  <section id="agoge">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">A educação espartana</p>
+        <h2>A agogê, escola de guerreiros</h2>
+      </div>
+      <div class="prose">
+        <p>Aos 7 anos, o menino espartano deixava a família e ia morar com outros garotos. A agogê era um treino duro: pouca comida, roupa leve até no inverno, disciplina rígida e muito exercício. Os meninos aprendiam a lutar, a obedecer e a aguentar dor e fome.</p>
+        <p>Os autores antigos contam que os meninos eram incentivados a roubar comida para aprender a ser espertos. Se fossem pegos, eram castigados, não pelo roubo, mas por terem sido descobertos.</p>
+      </div>
+      <ol class="ages">
+        <li>
+          <svg viewBox="0 0 120 220" width="87" height="160" aria-hidden="true"><use href="#menino"/></svg>
+          <div class="age"><strong>7 anos</strong><span>Sai de casa e começa a agogê</span></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 200 300" width="123" height="185" aria-hidden="true"><use href="#hoplita"/></svg>
+          <div class="age"><strong>20 anos</strong><span>Entra no exército</span></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 120 110" width="120" height="110" aria-hidden="true"><use href="#casa"/></svg>
+          <div class="age"><strong>30 anos</strong><span>Pode morar com a família e votar na assembleia</span></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 150 230" width="104" height="160" aria-hidden="true"><use href="#anciao"/></svg>
+          <div class="age"><strong>60 anos</strong><span>Deixa o exército e pode entrar na Gerúsia</span></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="divider"><div class="meander"></div></div>
+
+  <section id="mulheres">
+    <div class="wrap split">
+      <svg class="runner" viewBox="0 0 200 240" role="img" aria-label="Corredora espartana desenhada no estilo dos vasos gregos"><use href="#corredora"/></svg>
+      <div class="prose">
+        <div class="sec-head" style="margin-bottom: 8px">
+          <p class="eyebrow">Fortes e livres</p>
+          <h2>As mulheres espartanas</h2>
+        </div>
+        <ul class="list">
+          <li>Desde meninas, praticavam corrida, luta e arremesso de dardo e de disco.</li>
+          <li>Podiam herdar e ter terras. Segundo Aristóteles, quase dois quintos das terras de Esparta eram de mulheres.</li>
+          <li>Administravam a casa e os bens da família enquanto os homens estavam no exército.</li>
+          <li>Tinham muito mais liberdade do que as mulheres de Atenas, que quase não saíam de casa.</li>
+        </ul>
+        <blockquote class="quote-solo">
+          <p>“Somos as únicas que dão à luz homens.”</p>
+          <cite>Gorgo, rainha de Esparta, segundo Plutarco</cite>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="meander"></div></div>
+
+  <section id="governo">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">O poder em Esparta</p>
+        <h2>Quem mandava em Esparta</h2>
+        <p>Esparta misturava reis, um conselho de anciãos e uma assembleia. Era uma oligarquia: o poder de verdade ficava com poucas pessoas.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="38 0 100 110" width="46" height="51"><use href="#capacete"/></svg>
+            <svg viewBox="38 0 100 110" width="46" height="51"><use href="#capacete"/></svg>
+          </div>
+          <div>
+            <h3>2 reis</h3>
+            <p>Dois reis ao mesmo tempo, de duas famílias diferentes. Comandavam o exército na guerra e cuidavam dos rituais religiosos.</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" width="96" height="96"><use href="#coluna"/></svg></div>
+          <div>
+            <h3>Gerúsia</h3>
+            <p>Conselho de 28 anciãos com mais de 60 anos, junto com os 2 reis. Preparava as leis e julgava os crimes graves.</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" width="96" height="96"><use href="#multidao"/></svg></div>
+          <div>
+            <h3>Ápela</h3>
+            <p>Assembleia dos cidadãos com mais de 30 anos. Votava gritando: vencia o lado que gritasse mais alto.</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" width="96" height="96"><use href="#olho"/></svg></div>
+          <div>
+            <h3>5 éforos</h3>
+            <p>Eleitos todo ano pela Ápela. Fiscalizavam todo mundo, até os reis.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="meander"></div></div>
+
+  <section id="termopilas">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">A batalha mais famosa</p>
+        <h2>Termópilas, 480 a.C.</h2>
+      </div>
+      <svg class="battle" viewBox="0 80 1200 440" role="img" aria-label="Falange espartana bloqueando o exército persa na passagem entre as montanhas e o mar">
+        <defs>
+          <pattern id="ondas" width="60" height="20" patternUnits="userSpaceOnUse">
+            <path class="fs" d="M0 10 Q15 0 30 10 T60 10" stroke-width="3"/>
+          </pattern>
+          <pattern id="fila3" x="718" y="282" width="54" height="130" patternUnits="userSpaceOnUse"><use href="#persa" width="60" height="130"/></pattern>
+          <pattern id="fila2" x="704" y="296" width="54" height="130" patternUnits="userSpaceOnUse"><use href="#persa" width="60" height="130"/></pattern>
+          <pattern id="fila1" x="690" y="310" width="54" height="130" patternUnits="userSpaceOnUse"><use href="#persa" width="60" height="130"/></pattern>
+        </defs>
+        <path class="mount" d="M0 440 L0 170 L90 120 L190 190 L290 110 L400 200 L510 140 L610 220 L730 170 L850 250 L960 200 L1080 270 L1200 240 L1200 440 Z"/>
+        <rect x="718" y="282" width="482" height="130" fill="url(#fila3)" opacity=".85"/>
+        <rect x="704" y="296" width="496" height="130" fill="url(#fila2)" opacity=".92"/>
+        <rect x="690" y="310" width="510" height="130" fill="url(#fila1)"/>
+        <use href="#hoplita" x="10" y="170" width="180" height="270"/>
+        <use href="#hoplita" x="110" y="170" width="180" height="270"/>
+        <use href="#hoplita" x="210" y="170" width="180" height="270"/>
+        <use href="#hoplita" x="310" y="170" width="180" height="270"/>
+        <use href="#hoplita" x="410" y="170" width="180" height="270"/>
+        <use href="#hoplita" x="510" y="170" width="180" height="270"/>
+        <rect class="f" x="0" y="438" width="1200" height="6"/>
+        <rect x="0" y="456" width="1200" height="50" fill="url(#ondas)"/>
+        <text class="lbl" x="250" y="150" text-anchor="middle">gregos</text>
+        <text class="lbl" x="960" y="262" text-anchor="middle">persas</text>
+        <text class="lbl" x="1100" y="215" text-anchor="middle">montanhas</text>
+        <text class="lbl" x="1140" y="492" text-anchor="middle">mar</text>
+      </svg>
+      <div class="battle-text">
+        <div class="prose">
+          <p>Em 480 a.C., o rei persa <b>Xerxes</b> invadiu a Grécia com um exército enorme. O rei <b>Leônidas</b> levou 300 espartanos e, junto com alguns milhares de outros gregos, bloqueou a passagem estreita das Termópilas, entre as montanhas e o mar.</p>
+          <p>Por dois dias, a falange grega, um muro de escudos e lanças, segurou os persas. No terceiro dia, um grego chamado Efialtes mostrou aos persas um caminho pelas montanhas. Cercados, Leônidas e seus homens lutaram até o fim.</p>
+          <p>Eles perderam a batalha, mas deram tempo para os gregos se organizarem. No ano seguinte, em Plateia, os gregos liderados por Esparta venceram os persas.</p>
+        </div>
+        <div class="quotes">
+          <blockquote>
+            <p>“Venham pegá-las.”</p>
+            <cite>Leônidas, quando Xerxes mandou os gregos entregarem as armas, segundo Plutarco</cite>
+          </blockquote>
+          <blockquote>
+            <p>“Melhor: assim lutaremos à sombra.”</p>
+            <cite>Dieneces, ao ouvir que as flechas persas cobririam o sol, segundo Heródoto</cite>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div class="meander"></div></div>
+
+  <section id="curiosidades">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Para impressionar o professor</p>
+        <h2>Curiosidades</h2>
+      </div>
+      <div class="facts3">
+        <article>
+          <h3>Dinheiro de ferro</h3>
+          <p>Para ninguém juntar riqueza, Esparta usava barras pesadas de ferro como dinheiro. Uma quantia grande ocupava um depósito inteiro e precisava de bois para ser carregada.</p>
+        </article>
+        <article>
+          <h3>Cidade sem muralhas</h3>
+          <p>Por séculos, Esparta não teve muralhas, coisa rara na Grécia. Os espartanos diziam que as muralhas da cidade eram os seus próprios soldados.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><div class="sources">
+    <h2>Fontes</h2>
+    <ul>
+      <li>Heródoto, <i>Histórias</i>, livro 7 (Termópilas)</li>
+      <li>Plutarco, <i>Vida de Licurgo</i> e <i>Ditos dos espartanos</i></li>
+      <li>Xenofonte, <i>A constituição dos lacedemônios</i></li>
+      <li>Aristóteles, <i>Política</i>, livro 2</li>
+    </ul>
+  </div></div>
+  <div class="band"><div class="meander"></div></div>
+</footer>
+
+</body>
+</html>
